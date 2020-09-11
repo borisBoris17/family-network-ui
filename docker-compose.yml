@@ -10,8 +10,8 @@ services:
       - 8080:80
       - 443:443
       
-  family-network-ui:
-    image: family-network-ui:dev
+  local-social-ui:
+    image: local-social-ui:dev
     build:
       context: .
       dockerfile: Dockerfile
