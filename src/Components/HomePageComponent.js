@@ -6,22 +6,17 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/Inbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-
-import Moby from "../images/moby.JPG";
-import ShockedMaple from "../images/shockedMaple.JPG";
-import Molly from "../images/molly.JPG";
-import Kane from "../images/kane.JPG";
-import SquintingMaple from "../images/squintingMaple.JPG";
+import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
+import AlbumComponent from './AlbumComponent';
+import ImageController from '../Controllers/ImageController';
 
 const styles = theme => ({
   navPaper: {
-    margin:'20px',
+    margin: '20px',
     backgroundColor: 'rgba(195, 217, 234, 0.5)',
   },
   picturePaper: {
-    margin:'20px',
+    margin: '20px',
     marginLeft: '0px',
     backgroundColor: 'rgba(195, 217, 234, 0.3)',
   },
@@ -37,24 +32,29 @@ const styles = theme => ({
 
 class HomePageComponent extends React.Component {
 
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     count: this.props.count,
-  //   };
-  // }
+  constructor(props) {
+    super(props);
+    this.state = {
+      albums: this.props.albums,
+      picturesInAlbum: [],
+    };
+  }
 
-  // addToCount = () => {
-  //   this.setState({
-  //     count: Number.parseInt(this.state.count) + 1
-  //   });
-  // };
+  componentDidMount() {
+    this.setState({
+      picturesInAlbum: this.getAlbum(this.state.albums[0].album_id, this.setPicturesInAlbum),
+    });
+  }
 
-  // componentDidMount() {
-  //   this.setState({
-  //     count: Number.parseInt(this.state.count) + 1
-  //   });
-  // }
+  setPicturesInAlbum = (json) => {
+    this.setState({
+      picturesInAlbum: json,
+    });
+  }
+
+  getAlbum(album_id) {
+    return ImageController.fetchImagesForAlbum(album_id, this.setPicturesInAlbum);
+  }
 
   render() {
     const { classes } = this.props;
@@ -63,49 +63,22 @@ class HomePageComponent extends React.Component {
         <Grid item sm={12} lg={3}>
           <Paper className={classes.navPaper} elevation={3}>
             <List component="nav" aria-label="main mailbox filders">
-              <ListItem button>
-                <ListItemIcon>
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary="Inbox" />
-              </ListItem>
-              <ListItem button>
-                <ListItemIcon>
-                  <DraftsIcon />
-                </ListItemIcon>
-                <ListItemText primary="Default" />
-              </ListItem>
+              {this.props.albums.map((album) => {
+                return <ListItem key={album.album_id} button onClick>
+                  <ListItemIcon>
+                    <PhotoAlbumIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={album.album_name} />
+                </ListItem>
+              })}
             </List>
           </Paper>
         </Grid>
         <Grid item sm={12} lg={9}>
-          <Grid container spacing={2} >
-            <Grid item sm={12} lg={6}>
-              <Paper className={classes.picturePaper} elevation={3}>
-                <img src={Moby} className={classes.picture} alt="Moby" title="Moby"/>
-              </Paper>
-            </Grid>
-            <Grid item sm={12} lg={6}>
-              <Paper className={classes.picturePaper} elevation={3}>
-                <img src={ShockedMaple} className={classes.picture} alt="Shocked Maple" title="Shocked Maple" />
-              </Paper>
-            </Grid>
-            <Grid item sm={12} lg={6}>
-              <Paper className={classes.picturePaper} elevation={3}>
-                <img src={Molly} className={classes.picture} alt="Molly" title="Molly" />
-              </Paper>
-            </Grid>
-            <Grid item sm={12} lg={6}>
-              <Paper className={classes.picturePaper} elevation={3}>
-                <img src={Kane} className={classes.picture} alt="Kane" title="Kane" />
-              </Paper>
-            </Grid>
-            <Grid item sm={12} lg={6}>
-              <Paper className={classes.picturePaper} elevation={3}>
-                <img src={SquintingMaple} className={classes.picture} alt="Squinting Maple" title="Squinting Maple" />
-              </Paper>
-            </Grid>
-          </Grid>
+          <AlbumComponent 
+            pictures={this.state.picturesInAlbum}
+            album={this.state.albums[0]}
+           />
         </Grid>
       </Grid>
     </div>;
