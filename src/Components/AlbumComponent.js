@@ -30,7 +30,6 @@ class AlbumComponent extends React.Component {
         super(props);
         this.state = {
             album: this.props.album,
-            pictures: this.props.pictures,
     };
   }
 
@@ -38,8 +37,8 @@ class AlbumComponent extends React.Component {
         const { classes } = this.props;
         return <div >
             <Grid container spacing={2} >
-                {this.props.album && this.props.pictures ? this.props.pictures.map((picture) => {
-                    return <Grid key={picture.pictureId} item sm={12} lg={6}>
+                {this.props.album && this.props.album.pictures ? this.props.album.pictures.map((picture) => {
+                    return <Grid key={picture.picture_name} item sm={12} lg={6}>
                     <Paper className={classes.picturePaper} elevation={3}>
                         <img src={imageBaseURL + this.props.album.album_name + "/" + picture.picture_name} className={classes.picture} alt={picture.picture_title} title={picture.picture_title} />
                     </Paper>
