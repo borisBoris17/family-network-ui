@@ -8,7 +8,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import PhotoAlbumIcon from '@material-ui/icons/PhotoAlbum';
 import AlbumComponent from './AlbumComponent';
-import ImageController from '../Controllers/ImageController';
+import AlbumService from '../Services/AlbumService';
 
 const styles = theme => ({
   navPaper: {
@@ -36,24 +36,29 @@ class HomePageComponent extends React.Component {
     super(props);
     this.state = {
       albums: this.props.albums,
-      picturesInAlbum: [],
+      selectedAlbum: [],
     };
   }
 
   componentDidMount() {
+    this.getAlbum(this.state.albums[0].album_name, this.setSelectedAlbum);
+    // this.setState({
+    //   selectedAlbum: this.getAlbum(this.state.albums[0].album_name, this.setPicturesInAlbum),
+    // });
+  }
+
+  setSelectedAlbum = (json) => {
     this.setState({
-      picturesInAlbum: this.getAlbum(this.state.albums[0].album_id, this.setPicturesInAlbum),
+      album: json,
     });
   }
 
-  setPicturesInAlbum = (json) => {
-    this.setState({
-      picturesInAlbum: json,
-    });
+  getAlbum(album_name) {
+    return AlbumService.fetchAlbum(album_name, this.setSelectedAlbum);
   }
 
-  getAlbum(album_id) {
-    return ImageController.fetchImagesForAlbum(album_id, this.setPicturesInAlbum);
+  selectAlbum() {
+
   }
 
   render() {
@@ -64,7 +69,7 @@ class HomePageComponent extends React.Component {
           <Paper className={classes.navPaper} elevation={3}>
             <List component="nav" aria-label="main mailbox filders">
               {this.props.albums.map((album) => {
-                return <ListItem key={album.album_id} button onClick>
+                return <ListItem key={album.album_id} button onClick={this.selectAlbum()}>
                   <ListItemIcon>
                     <PhotoAlbumIcon />
                   </ListItemIcon>
@@ -76,8 +81,7 @@ class HomePageComponent extends React.Component {
         </Grid>
         <Grid item sm={12} lg={9}>
           <AlbumComponent 
-            pictures={this.state.picturesInAlbum}
-            album={this.state.albums[0]}
+            album={this.state.album}
            />
         </Grid>
       </Grid>
